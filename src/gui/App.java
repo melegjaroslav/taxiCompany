@@ -1,14 +1,20 @@
 package gui;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 public class App {
 
 	public static void main(String[] args) {
-		JFrame frame = new JFrame("Taxi Company");
+
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			public void run() {
+				new MainFrame();
+			}
+		});
 		
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
 	}
 
 }
+  
