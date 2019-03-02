@@ -8,6 +8,7 @@ import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -30,6 +31,8 @@ public class DriverFormPanel extends JPanel {
 	
 	private JList<VehicleType> vehicleType;
 	private JTextField vehicleRegPlate;
+	
+	private JCheckBox isAvailable;
 	
 	public DriverFormPanel() {
 		// set width of panel
@@ -63,6 +66,8 @@ public class DriverFormPanel extends JPanel {
 		vehicleType.setSelectedIndex(0);
 
 		vehicleRegPlate = new JTextField(10);
+		
+		isAvailable = new JCheckBox();
 		
 		Border innerBorder = BorderFactory.createTitledBorder("Add driver");
 		Border outerBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
@@ -207,6 +212,23 @@ public class DriverFormPanel extends JPanel {
 		gc.anchor = GridBagConstraints.LINE_START;
 		gc.insets = new Insets(0, 0, 0, 0);;
 		add(vehicleRegPlate, gc);
+		
+		////////next row /////////
+		
+		gc.gridy++;
+		
+		gc.weightx = 0.1;
+		gc.weighty = 0.1;
+		
+		gc.gridx = 0;
+		gc.anchor = GridBagConstraints.LINE_END;
+		gc.insets = new Insets(0, 0, 0, 5);
+		add(new JLabel("Available: "), gc);
+		
+		gc.gridx = 1;
+		gc.anchor = GridBagConstraints.LINE_START;
+		gc.insets = new Insets(0, 0, 0, 0);;
+		add(isAvailable, gc);
 	}
 }
 

@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.sql.SQLException;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
@@ -14,19 +15,37 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import controller.Controller;
+
 public class MainFrame extends JFrame {
-	
+
 	private DriverFormPanel driverFormPanel;
-	
+	private DriverListPanel driverListPanel;
+	private Controller controller;
+
 	public MainFrame() {
 		super("Taxi Company");
-		
+
 		setLayout(new BorderLayout());
 
 		driverFormPanel = new DriverFormPanel();
+		driverListPanel = new DriverListPanel();
+
+		controller = new Controller();
 		
+		connect();
+		
+		try {
+			controller.load();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		driverListPanel.setData(controller.getDrivers());
+
 		setJMenuBar(createMenuBar());
-		
+
 		addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -35,14 +54,24 @@ public class MainFrame extends JFrame {
 				dispose();
 				System.gc();
 			}
-			
+
 		});
-		
+
 		add(driverFormPanel, BorderLayout.WEST);
+		add(driverListPanel, BorderLayout.CENTER);
 
 		setSize(600, 500);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setVisible(true);
+	}
+
+	private void connect() {
+		try {
+			controller.connect();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(MainFrame.this, "Cannot connect to database.", "Database Connection Problem",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private JMenuBar createMenuBar() {
