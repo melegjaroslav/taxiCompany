@@ -48,9 +48,9 @@ public class Database {
 	
 	public void save(Driver driver) throws SQLException {
 		
-		String checkSql = "select count(*) as count from drivers where id=?";
+//		String checkSql = "select count(*) as count from drivers where id=?";
 		
-		PreparedStatement checkStatement = connection.prepareStatement(checkSql);
+//		PreparedStatement checkStatement = connection.prepareStatement(checkSql);
 		
 		String insertSql = "insert into drivers (id, first_name, last_name, phone_number, age, gender, vehicle_type, vehicle_reg_plate, available) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement insertStatement = connection.prepareStatement(insertSql);
@@ -68,31 +68,28 @@ public class Database {
 		String vehicleRegPlate = driver.getVehicleRegPlate();
 		boolean isAvailable = driver.isAvailable();
 		
-		checkStatement.setString(1, id);
+//		checkStatement.setString(1, id);
 		
-		ResultSet checkResult = checkStatement.executeQuery();
-		checkResult.next();
+//		ResultSet checkResult = checkStatement.executeQuery();
+//		checkResult.next();
 		
-		int count = checkResult.getInt(1);
+//		int count = checkResult.getInt(1);
 		
-		if(count == 0) {
-			System.out.println("Inserting driver with ID " + id);
-			
-			int col = 1;
-			insertStatement.setString(col++, id);
-			insertStatement.setString(col++, firstName);
-			insertStatement.setString(col++, lastName);
-			insertStatement.setString(col++, phoneNumber);
-			insertStatement.setInt(col++, age);
-			insertStatement.setString(col++, gender.name());
-			insertStatement.setString(col++, vehicleType.name());
-			insertStatement.setString(col++, vehicleRegPlate);
-			insertStatement.setBoolean(col, isAvailable);
-			
-			insertStatement.executeUpdate();
-		} else {
-			System.out.println("Driver with this id already exists in the database.");
-		}
+		System.out.println("Inserting driver with ID " + id);
+		
+		int col = 1;
+		insertStatement.setString(col++, id);
+		insertStatement.setString(col++, firstName);
+		insertStatement.setString(col++, lastName);
+		insertStatement.setString(col++, phoneNumber);
+		insertStatement.setInt(col++, age);
+		insertStatement.setString(col++, gender.name());
+		insertStatement.setString(col++, vehicleType.name());
+		insertStatement.setString(col++, vehicleRegPlate);
+		insertStatement.setBoolean(col, isAvailable);
+		
+		insertStatement.executeUpdate();
+
 //		} else {
 //			System.out.println("Updating person with ID " + id);
 //			
@@ -111,7 +108,7 @@ public class Database {
 		
 //		updateStatement.close();
 		insertStatement.close();
-		checkStatement.close();
+//		checkStatement.close();
 	}
 	
 	public void load() throws SQLException {
@@ -135,8 +132,6 @@ public class Database {
 			
 			Driver driver = new Driver(id, firstName, lastName, phoneNumber, age, Gender.valueOf(gender), VehicleType.valueOf(vehicleType), vehicleRegPlate, isAvailable); 
 			drivers.add(driver);
-			
-			System.out.println(driver);
 		}
 		
 		results.close();
@@ -157,7 +152,18 @@ public class Database {
 		return Collections.unmodifiableList(drivers);
 	}
 	
-	public void removeDriver(int index) {
+	public void removeDriver(int index) throws SQLException {
+		String driverId = drivers.get(index).getId();
+		
+		String removeSql = "delete from drivers WHERE id = ?";
+		PreparedStatement removeStatement = connection.prepareStatement(removeSql);
+		
+		removeStatement.setString(1, driverId);
+		
+		removeStatement.executeUpdate();
+		
 		drivers.remove(index);
+		
+		removeStatement.close();
 	}
 }

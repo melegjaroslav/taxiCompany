@@ -28,7 +28,7 @@ public class Controller {
 		db.disconnect();
 	}
 	
-	public void removeDriver(int index) {
+	public void removeDriver(int index) throws SQLException {
 		db.removeDriver(index);
 	}
 	

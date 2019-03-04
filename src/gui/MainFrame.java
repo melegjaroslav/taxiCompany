@@ -50,6 +50,17 @@ public class MainFrame extends JFrame {
 				driverListPanel.refresh();
 			}
 		});
+		
+		driverListPanel.setDriverListListener(new DriverListListener() {
+			public void rowDeleted(int row) {
+				try {
+					controller.removeDriver(row);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 
 		setJMenuBar(createMenuBar());
 

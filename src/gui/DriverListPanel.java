@@ -69,7 +69,7 @@ public class DriverListPanel extends JPanel {
 		driverListModel.fireTableDataChanged();
 	}
 	
-	public void setPersonTableListener(DriverListListener listener) {
+	public void setDriverListListener(DriverListListener listener) {
 		this.driverListListener = listener;
 	}
 }
