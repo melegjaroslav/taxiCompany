@@ -81,6 +81,9 @@ public class DriverFormPanel extends JPanel {
 		isAvailable = new JCheckBox();
 
 		submit = new JButton("Submit");
+		
+		// set initial form values
+		initForm();
 
 		// set up mnemonics
 		submit.setMnemonic(KeyEvent.VK_S);
@@ -103,6 +106,9 @@ public class DriverFormPanel extends JPanel {
 						_vehicleType.getId(), _vehicleRegPlate, _isAvailable);
 				if (driverFormListener != null) {
 					driverFormListener.formEventOcurred(ev);
+					
+					// set initial form values
+					initForm();
 				}
 			}
 		});
@@ -291,6 +297,17 @@ public class DriverFormPanel extends JPanel {
 
 	public void setDriverFormListener(DriverFormListener listener) {
 		this.driverFormListener = listener;
+	}
+	
+	private void initForm() {
+		firstName.setText("");
+		lastName.setText("");
+		phoneNumber.setText("");
+		age.setValue(18);
+		genderGroup.setSelected(male.getModel(), true);
+		vehicleType.setSelectedIndex(1);
+		vehicleRegPlate.setText("");
+		isAvailable.setSelected(true);
 	}
 }
 

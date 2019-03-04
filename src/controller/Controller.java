@@ -16,10 +16,6 @@ public class Controller {
 		return db.getDrivers();
 	}
 	
-	public void save(Driver driver) throws SQLException {
-		db.save(driver);
-	}
-	
 	public void connect() throws Exception {
 		db.connect();
 	}

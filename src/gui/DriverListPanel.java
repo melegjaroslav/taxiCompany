@@ -48,7 +48,11 @@ public class DriverListPanel extends JPanel {
 		removeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int row = drivers.getSelectedRow();
-				System.out.println(row);
+				
+				if(driverListListener != null) {
+					driverListListener.rowDeleted(row);
+					driverListModel.fireTableRowsDeleted(row, row);
+				}
 			}
 		});
 		
