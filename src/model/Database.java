@@ -46,7 +46,7 @@ public class Database {
 		}
 	}
 	
-	public void save() throws SQLException {
+	public void save(Driver driver) throws SQLException {
 		
 		String checkSql = "select count(*) as count from drivers where id=?";
 		
@@ -57,59 +57,57 @@ public class Database {
 		
 //		String updateSql = "update people set name=?, age=?, employment_status=?, tax_id=?, us_citizen=?, gender=?, occupation=? where id=?";
 //		PreparedStatement updateStatement = con.prepareStatement(updateSql);
+
+		String id = driver.getId();
+		String firstName = driver.getFirstName();
+		String lastName = driver.getLastName();
+		String phoneNumber = driver.getPhoneNumber();
+		int age = driver.getAge();
+		Gender gender = driver.getGender();
+		VehicleType vehicleType = driver.getVehicleType();
+		String vehicleRegPlate = driver.getVehicleRegPlate();
+		boolean isAvailable = driver.isAvailable();
 		
-		for(Driver driver: drivers) {
-			String id = driver.getId();
-			String firstName = driver.getFirstName();
-			String lastName = driver.getLastName();
-			String phoneNumber = driver.getPhoneNumber();
-			int age = driver.getAge();
-			Gender gender = driver.getGender();
-			VehicleType vehicleType = driver.getVehicleType();
-			String vehicleRegPlate = driver.getVehicleRegPlate();
-			boolean isAvailable = driver.isAvailable();
+		checkStatement.setString(1, id);
+		
+		ResultSet checkResult = checkStatement.executeQuery();
+		checkResult.next();
+		
+		int count = checkResult.getInt(1);
+		
+		if(count == 0) {
+			System.out.println("Inserting driver with ID " + id);
 			
-			checkStatement.setString(1, id);
+			int col = 1;
+			insertStatement.setString(col++, id);
+			insertStatement.setString(col++, firstName);
+			insertStatement.setString(col++, lastName);
+			insertStatement.setString(col++, phoneNumber);
+			insertStatement.setInt(col++, age);
+			insertStatement.setString(col++, gender.name());
+			insertStatement.setString(col++, vehicleType.name());
+			insertStatement.setString(col++, vehicleRegPlate);
+			insertStatement.setBoolean(col, isAvailable);
 			
-			ResultSet checkResult = checkStatement.executeQuery();
-			checkResult.next();
-			
-			int count = checkResult.getInt(1);
-			
-			if(count == 0) {
-				System.out.println("Inserting driver with ID " + id);
-				
-				int col = 1;
-				insertStatement.setString(col++, id);
-				insertStatement.setString(col++, firstName);
-				insertStatement.setString(col++, lastName);
-				insertStatement.setString(col++, phoneNumber);
-				insertStatement.setInt(col++, age);
-				insertStatement.setString(col++, gender.name());
-				insertStatement.setString(col++, vehicleType.name());
-				insertStatement.setString(col++, vehicleRegPlate);
-				insertStatement.setBoolean(col, isAvailable);
-				
-				insertStatement.executeUpdate();
-			} else {
-				System.out.println("Driver with this id already exists in the database.");
-			}
-//			} else {
-//				System.out.println("Updating person with ID " + id);
-//				
-//				int col = 1;
-//				updateStatement.setString(col++, name);
-//				updateStatement.setString(col++, age.name());
-//				updateStatement.setString(col++, emp.name());
-//				updateStatement.setString(col++, tax);
-//				updateStatement.setBoolean(col++, isUs);
-//				updateStatement.setString(col++, gender.name());
-//				updateStatement.setString(col++, occupation);				
-//				updateStatement.setInt(col++, id);
-//				
-//				updateStatement.executeUpdate();
-//			}
+			insertStatement.executeUpdate();
+		} else {
+			System.out.println("Driver with this id already exists in the database.");
 		}
+//		} else {
+//			System.out.println("Updating person with ID " + id);
+//			
+//			int col = 1;
+//			updateStatement.setString(col++, name);
+//			updateStatement.setString(col++, age.name());
+//			updateStatement.setString(col++, emp.name());
+//			updateStatement.setString(col++, tax);
+//			updateStatement.setBoolean(col++, isUs);
+//			updateStatement.setString(col++, gender.name());
+//			updateStatement.setString(col++, occupation);				
+//			updateStatement.setInt(col++, id);
+//			
+//			updateStatement.executeUpdate();
+//		}
 		
 //		updateStatement.close();
 		insertStatement.close();
@@ -147,6 +145,12 @@ public class Database {
 	
 	public void addDriver(Driver driver) {
 		drivers.add(driver);
+		try {
+			save(driver);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public List<Driver> getDrivers() {

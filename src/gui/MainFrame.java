@@ -43,6 +43,13 @@ public class MainFrame extends JFrame {
 		}
 		
 		driverListPanel.setData(controller.getDrivers());
+		
+		driverFormPanel.setDriverFormListener(new DriverFormListener() {
+			public void formEventOcurred(DriverFormEvent e) {
+				controller.addDriver(e);
+				driverListPanel.refresh();
+			}
+		});
 
 		setJMenuBar(createMenuBar());
 

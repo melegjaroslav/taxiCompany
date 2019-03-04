@@ -16,8 +16,8 @@ public class Controller {
 		return db.getDrivers();
 	}
 	
-	public void save() throws SQLException {
-		db.save();
+	public void save(Driver driver) throws SQLException {
+		db.save(driver);
 	}
 	
 	public void connect() throws Exception {
@@ -61,7 +61,7 @@ public class Controller {
 		}
 		
 		Gender gender;
-		
+
 		if(genderCat.equals("male")) {
 			gender = Gender.male;
 		}
@@ -70,7 +70,7 @@ public class Controller {
 		}
 		
 		Driver driver = new Driver(firstName, lastName, phoneNumber, age, gender, vehicleType, vehicleRegPlate, isAvailable);
-		
+
 		db.addDriver(driver);
 	}
 }
