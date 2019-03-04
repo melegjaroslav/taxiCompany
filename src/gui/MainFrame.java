@@ -3,6 +3,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -14,6 +15,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import controller.Controller;
 
@@ -120,8 +122,13 @@ public class MainFrame extends JFrame {
 				driverFormPanel.setVisible(isVisible.isSelected());
 			}
 		});
-
-		// TODO: add mnemonics and accelerators
+		
+		// set mnemonics
+		fileMenu.setMnemonic(KeyEvent.VK_F);
+		windowMenu.setMnemonic(KeyEvent.VK_W);
+		
+		// set accelerators
+		exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
 
 		exitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
