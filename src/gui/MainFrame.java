@@ -116,8 +116,8 @@ public class MainFrame extends JFrame {
 
 		showFormItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) e.getSource();
-				// TODO: set visibility of driver form
+				JCheckBoxMenuItem isVisible = (JCheckBoxMenuItem) e.getSource();
+				driverFormPanel.setVisible(isVisible.isSelected());
 			}
 		});
 
