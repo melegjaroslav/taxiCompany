@@ -10,7 +10,7 @@ public class DriverListModel extends AbstractTableModel {
 
 	private List<Driver> db;
 	private String[] colNames = { "ID", "First Name", "Last Name", "Phone Number", "Age", "Gender",
-			"Vehicle Type", "Vehicle Reg Plate" };
+			"Vehicle Type", "Vehicle Reg Plate", "Available" };
 	
 	@Override
 	public String getColumnName(int column) {
@@ -28,7 +28,7 @@ public class DriverListModel extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return 8;
+		return 9;
 	}
 
 	@Override
@@ -52,6 +52,12 @@ public class DriverListModel extends AbstractTableModel {
 			return driver.getVehicleType();
 		case 7:
 			return driver.getVehicleRegPlate();
+		case 8:
+			if(driver.isAvailable()) {
+				return "Yes";
+			} else {
+				return "No";
+			}
 		}
 
 		return null;
