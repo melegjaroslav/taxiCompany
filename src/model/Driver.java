@@ -41,7 +41,6 @@ public class Driver implements Serializable {
 	}
 	
 	public static int getCount() {
-//		return count;
 //		TODO: count
 		return 0;
 	}
@@ -80,6 +79,10 @@ public class Driver implements Serializable {
 	
 	public boolean isAvailable() {
 		return isAvailable;
+	}
+
+	public void setAvailable(boolean isAvailable) {
+		this.isAvailable = isAvailable;
 	}
 
 }

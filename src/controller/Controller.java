@@ -28,10 +28,6 @@ public class Controller {
 		db.disconnect();
 	}
 	
-	public void removeDriver(int index) throws SQLException {
-		db.removeDriver(index);
-	}
-	
 	public void addDriver(DriverFormEvent e) {
 		String firstName = e.getFirstName();
 		String lastName = e.getLastName();
@@ -68,5 +64,13 @@ public class Controller {
 		Driver driver = new Driver(firstName, lastName, phoneNumber, age, gender, vehicleType, vehicleRegPlate, isAvailable);
 
 		db.addDriver(driver);
+	}
+	
+	public void removeDriver(int index) throws SQLException {
+		db.removeDriver(index);
+	}
+
+	public void toggleAvailable(int index) throws SQLException {
+		db.toggleAvailable(index);
 	}
 }

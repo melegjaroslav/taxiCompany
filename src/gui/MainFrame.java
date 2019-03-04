@@ -62,6 +62,16 @@ public class MainFrame extends JFrame {
 					e.printStackTrace();
 				}
 			}
+
+			@Override
+			public void toggleAvailable(int row) {
+				try {
+					controller.toggleAvailable(row);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		});
 
 		setJMenuBar(createMenuBar());

@@ -28,6 +28,9 @@ public class DriverListPanel extends JPanel {
 		popup = new JPopupMenu();
 		
 		JMenuItem removeItem = new JMenuItem("Delete Driver");
+		JMenuItem toggleAvailable = new JMenuItem("Toggle Available");
+		
+		popup.add(toggleAvailable);
 		popup.add(removeItem);
 		
 		drivers.addMouseListener(new MouseAdapter() {
@@ -41,6 +44,17 @@ public class DriverListPanel extends JPanel {
 				
 				if(e.getButton() == MouseEvent.BUTTON3) {
 					popup.show(drivers, e.getX(), e.getY());
+				}
+			}
+		});
+		
+		toggleAvailable.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int row = drivers.getSelectedRow();
+				
+				if(driverListListener != null) {
+					driverListListener.toggleAvailable(row);
+					driverListModel.fireTableRowsUpdated(row, row);
 				}
 			}
 		});

@@ -166,4 +166,22 @@ public class Database {
 		
 		removeStatement.close();
 	}
+
+	public void toggleAvailable(int index) throws SQLException {
+		String driverId = drivers.get(index).getId();
+		boolean isAvailable = !drivers.get(index).isAvailable();
+		
+		String toggleAvailableSql = "update drivers set available = ? where id = ?";
+		PreparedStatement toggleAvailableStatement = connection.prepareStatement(toggleAvailableSql);
+		
+		int col = 1;
+		toggleAvailableStatement.setBoolean(col++, isAvailable);
+		toggleAvailableStatement.setString(col, driverId);
+		
+		toggleAvailableStatement.executeUpdate();
+		
+		drivers.get(index).setAvailable(isAvailable);
+		
+		toggleAvailableStatement.close();
+	}
 }
