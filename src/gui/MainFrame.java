@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.SQLException;
+import java.util.prefs.Preferences;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
@@ -23,36 +24,34 @@ public class MainFrame extends JFrame {
 
 	private DriverFormPanel driverFormPanel;
 	private DriverListPanel driverListPanel;
+	private PrefsDialog prefsDialog;
+	private Preferences preferences;
 	private Controller controller;
+	private Toolbar toolbar;
 
 	public MainFrame() {
 		super("Taxi Company");
 
 		setLayout(new BorderLayout());
 
+		toolbar = new Toolbar();
 		driverFormPanel = new DriverFormPanel();
 		driverListPanel = new DriverListPanel();
+		prefsDialog = new PrefsDialog(this);
+
+		preferences = Preferences.userRoot().node("db");
 
 		controller = new Controller();
-		
-		connect();
-		
-		try {
-			controller.load();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
+
 		driverListPanel.setData(controller.getDrivers());
-		
+
 		driverFormPanel.setDriverFormListener(new DriverFormListener() {
 			public void formEventOcurred(DriverFormEvent e) {
 				controller.addDriver(e);
 				driverListPanel.refresh();
 			}
 		});
-		
+
 		driverListPanel.setDriverListListener(new DriverListListener() {
 			public void rowDeleted(int row) {
 				try {
@@ -74,7 +73,35 @@ public class MainFrame extends JFrame {
 			}
 		});
 
+		prefsDialog.setPrefsListener(new PrefsListener() {
+			public void preferencesSet(String user, String password, int port) {
+				preferences.put("user", user);
+				preferences.put("password", password);
+				preferences.putInt("port", port);
+			}
+		});
+
+		String user = preferences.get("user", "");
+		String password = preferences.get("password", "");
+		int port = preferences.getInt("port", 3306);
+		prefsDialog.setDefaults(user, password, port);
+
 		setJMenuBar(createMenuBar());
+
+		toolbar.setToolbarListener(new ToolbarListener() {
+
+			@Override
+			public void connectEventOccured() {
+				try {
+					controller.connect();
+					loadData();
+					driverListPanel.refresh();
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(MainFrame.this, "Cannot connect to database.",
+							"Database Connection Problem", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 
 		addWindowListener(new WindowAdapter() {
 
@@ -88,6 +115,7 @@ public class MainFrame extends JFrame {
 		});
 
 		add(driverFormPanel, BorderLayout.WEST);
+		add(toolbar, BorderLayout.NORTH);
 		add(driverListPanel, BorderLayout.CENTER);
 
 		setSize(600, 500);
@@ -95,11 +123,11 @@ public class MainFrame extends JFrame {
 		setVisible(true);
 	}
 
-	private void connect() {
+	private void loadData() {
 		try {
-			controller.connect();
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(MainFrame.this, "Cannot connect to database.", "Database Connection Problem",
+			controller.load();
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(MainFrame.this, "Cannot load drivers.", "Database Connection Problem",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -126,17 +154,23 @@ public class MainFrame extends JFrame {
 		menuBar.add(fileMenu);
 		menuBar.add(windowMenu);
 
+		prefsItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				prefsDialog.setVisible(true);
+			}
+		});
+
 		showFormItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JCheckBoxMenuItem isVisible = (JCheckBoxMenuItem) e.getSource();
 				driverFormPanel.setVisible(isVisible.isSelected());
 			}
 		});
-		
+
 		// set mnemonics
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		windowMenu.setMnemonic(KeyEvent.VK_W);
-		
+
 		// set accelerators
 		exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
 

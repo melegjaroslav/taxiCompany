@@ -9,14 +9,18 @@ import java.sql.Statement;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 public class Database {
 	
 	private List<Driver> drivers;
 	private Connection connection;
+	private Preferences preferences;
 	
 	public Database() {
 		drivers = new LinkedList<Driver>();
+		
+		preferences = Preferences.userRoot().node("db");
 	}
 	
 	public void connect() throws Exception {
@@ -29,11 +33,8 @@ public class Database {
 			throw new Exception("Driver not found");
 		}
 		
-		String url = "jdbc:mysql://localhost:3306/taxicompany";
-		connection = DriverManager.getConnection(url, "root", "toor");
-		
-		System.out.println("Connected: " + connection);
-		
+		String url = "jdbc:mysql://localhost:" + preferences.getInt("port", 3306) + "/taxicompany";
+		connection = DriverManager.getConnection(url, preferences.get("user", ""), preferences.get("password", ""));
 	}
 	
 	public void disconnect() {
