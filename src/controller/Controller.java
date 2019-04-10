@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import gui.DriverFormEvent;
+import gui.EditDriverEvent;
 import model.Database;
 import model.Driver;
 import model.Gender;
@@ -11,15 +12,19 @@ import model.VehicleType;
 
 public class Controller {
 	Database db = new Database();
-	
+
 	public List<Driver> getDrivers() {
 		return db.getDrivers();
 	}
 	
+	public Driver getDriver(int index) {
+		return db.getDrivers().get(index);
+	}
+
 	public void connect() throws Exception {
 		db.connect();
 	}
-	
+
 	public void load() throws SQLException {
 		db.load();
 	}
@@ -27,7 +32,7 @@ public class Controller {
 	public void disconnect() {
 		db.disconnect();
 	}
-	
+
 	public void addDriver(DriverFormEvent e) {
 		String firstName = e.getFirstName();
 		String lastName = e.getLastName();
@@ -37,11 +42,11 @@ public class Controller {
 		int vehicleTypeId = e.getVehicleType();
 		String vehicleRegPlate = e.getVehicleRegPlate();
 		boolean isAvailable = e.isAvailable();
-		
+
 		VehicleType vehicleType = null;
-		
-		switch(vehicleTypeId) {
-		case 0: 
+
+		switch (vehicleTypeId) {
+		case 0:
 			vehicleType = VehicleType.car;
 			break;
 		case 1:
@@ -51,21 +56,60 @@ public class Controller {
 			vehicleType = VehicleType.van;
 			break;
 		}
-		
+
 		Gender gender;
 
-		if(genderCat.equals("male")) {
+		if (genderCat.equals("male")) {
 			gender = Gender.male;
-		}
-		else {
+		} else {
 			gender = Gender.female;
 		}
-		
-		Driver driver = new Driver(firstName, lastName, phoneNumber, age, gender, vehicleType, vehicleRegPlate, isAvailable);
+
+		Driver driver = new Driver(firstName, lastName, phoneNumber, age, gender, vehicleType, vehicleRegPlate,
+				isAvailable);
 
 		db.addDriver(driver);
 	}
-	
+
+	public void editDriver(EditDriverEvent e) {
+		String id = e.getId();
+		String firstName = e.getFirstName();
+		String lastName = e.getLastName();
+		String phoneNumber = e.getPhoneNumber();
+		int age = e.getAge();
+		String genderCat = e.getGender();
+		int vehicleTypeId = e.getVehicleType();
+		String vehicleRegPlate = e.getVehicleRegPlate();
+		boolean isAvailable = e.isAvailable();
+
+		VehicleType vehicleType = null;
+
+		switch (vehicleTypeId) {
+		case 0:
+			vehicleType = VehicleType.car;
+			break;
+		case 1:
+			vehicleType = VehicleType.electric_car;
+			break;
+		case 2:
+			vehicleType = VehicleType.van;
+			break;
+		}
+
+		Gender gender;
+
+		if (genderCat.equals("male")) {
+			gender = Gender.male;
+		} else {
+			gender = Gender.female;
+		}
+		
+		Driver driver = new Driver(id, firstName, lastName, phoneNumber, age, gender, vehicleType, vehicleRegPlate,
+				isAvailable);
+
+		db.updateDriver(driver);
+	}
+
 	public void removeDriver(int index) throws SQLException {
 		db.removeDriver(index);
 	}

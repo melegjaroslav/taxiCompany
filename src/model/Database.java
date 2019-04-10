@@ -18,15 +18,18 @@ public class Database {
 	private Preferences preferences;
 	
 	public Database() {
+		//initialize drivers list
 		drivers = new LinkedList<Driver>();
 		
+		// get preferences from saved preferences
 		preferences = Preferences.userRoot().node("db");
 	}
 	
 	public void connect() throws Exception {
-		
+		// if connection already established, do nothing
 		if(connection != null) return;
 		
+		// try to find connector, throw exception if not found
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
@@ -34,10 +37,12 @@ public class Database {
 		}
 		
 		String url = "jdbc:mysql://localhost:" + preferences.getInt("port", 3306) + "/taxicompany";
+		// connect to database, save connection to variable so it can be closed
 		connection = DriverManager.getConnection(url, preferences.get("user", ""), preferences.get("password", ""));
 	}
 	
 	public void disconnect() {
+		// if connection exists, close it
 		if(connection != null) {
 			try {
 				connection.close();
@@ -47,17 +52,10 @@ public class Database {
 		}
 	}
 	
-	public void save(Driver driver) throws SQLException {
-		
-//		String checkSql = "select count(*) as count from drivers where id=?";
-		
-//		PreparedStatement checkStatement = connection.prepareStatement(checkSql);
+	private void save(Driver driver) throws SQLException {
 		
 		String insertSql = "insert into drivers (id, first_name, last_name, phone_number, age, gender, vehicle_type, vehicle_reg_plate, available) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement insertStatement = connection.prepareStatement(insertSql);
-		
-//		String updateSql = "update people set name=?, age=?, employment_status=?, tax_id=?, us_citizen=?, gender=?, occupation=? where id=?";
-//		PreparedStatement updateStatement = con.prepareStatement(updateSql);
 
 		String id = driver.getId();
 		String firstName = driver.getFirstName();
@@ -68,13 +66,6 @@ public class Database {
 		VehicleType vehicleType = driver.getVehicleType();
 		String vehicleRegPlate = driver.getVehicleRegPlate();
 		boolean isAvailable = driver.isAvailable();
-		
-//		checkStatement.setString(1, id);
-		
-//		ResultSet checkResult = checkStatement.executeQuery();
-//		checkResult.next();
-		
-//		int count = checkResult.getInt(1);
 		
 		System.out.println("Inserting driver with ID " + id);
 		
@@ -91,25 +82,37 @@ public class Database {
 		
 		insertStatement.executeUpdate();
 
-//		} else {
-//			System.out.println("Updating person with ID " + id);
-//			
-//			int col = 1;
-//			updateStatement.setString(col++, name);
-//			updateStatement.setString(col++, age.name());
-//			updateStatement.setString(col++, emp.name());
-//			updateStatement.setString(col++, tax);
-//			updateStatement.setBoolean(col++, isUs);
-//			updateStatement.setString(col++, gender.name());
-//			updateStatement.setString(col++, occupation);				
-//			updateStatement.setInt(col++, id);
-//			
-//			updateStatement.executeUpdate();
-//		}
-		
-//		updateStatement.close();
 		insertStatement.close();
-//		checkStatement.close();
+	}
+	
+	private void update(Driver driver) throws SQLException {
+//											   first_name, last_name, phone_number, age, gender, vehicle_reg_plate, available
+		String updateSql = "update drivers set first_name=?, last_name=?, phone_number=?, age=?, gender=?, vehicle_reg_plate=?, available=?  where id=?";
+		PreparedStatement updateStatement = connection.prepareStatement(updateSql);
+		
+		String id = driver.getId();
+		String firstName = driver.getFirstName();
+		String lastName = driver.getLastName();
+		String phoneNumber = driver.getPhoneNumber();
+		int age = driver.getAge();
+		Gender gender = driver.getGender();
+//		VehicleType vehicleType = driver.getVehicleType();
+		String vehicleRegPlate = driver.getVehicleRegPlate();
+		boolean isAvailable = driver.isAvailable();
+		
+		System.out.println("Updating person with ID " + id);
+		
+		int col = 1;
+		updateStatement.setString(col++, firstName);
+		updateStatement.setString(col++, lastName);
+		updateStatement.setString(col++, phoneNumber);
+		updateStatement.setInt(col++, age);
+		updateStatement.setString(col++, gender.name());
+		updateStatement.setString(col++, vehicleRegPlate);
+		updateStatement.setBoolean(col++, isAvailable);				
+		updateStatement.setString(col++, id);
+		
+		updateStatement.executeUpdate();
 	}
 	
 	public void load() throws SQLException {
@@ -143,6 +146,15 @@ public class Database {
 		drivers.add(driver);
 		try {
 			save(driver);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateDriver(Driver driver) {
+		try {
+			update(driver);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

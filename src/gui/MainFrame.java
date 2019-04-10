@@ -28,21 +28,26 @@ public class MainFrame extends JFrame {
 	private Preferences preferences;
 	private Controller controller;
 	private Toolbar toolbar;
+	private EditDriverDialog editDriverDialog;
 
 	public MainFrame() {
 		super("Taxi Company");
 
+		// set frame layout
 		setLayout(new BorderLayout());
 
+		// initialize private variables
 		toolbar = new Toolbar();
 		driverFormPanel = new DriverFormPanel();
 		driverListPanel = new DriverListPanel();
 		prefsDialog = new PrefsDialog(this);
+		editDriverDialog = new EditDriverDialog(this);
 
 		preferences = Preferences.userRoot().node("db");
 
 		controller = new Controller();
 
+		// set driver list data
 		driverListPanel.setData(controller.getDrivers());
 
 		driverFormPanel.setDriverFormListener(new DriverFormListener() {
@@ -52,7 +57,9 @@ public class MainFrame extends JFrame {
 			}
 		});
 
+		// set driver list listener
 		driverListPanel.setDriverListListener(new DriverListListener() {
+			// override driver list listener methods
 			public void rowDeleted(int row) {
 				try {
 					controller.removeDriver(row);
@@ -62,7 +69,6 @@ public class MainFrame extends JFrame {
 				}
 			}
 
-			@Override
 			public void toggleAvailable(int row) {
 				try {
 					controller.toggleAvailable(row);
@@ -71,9 +77,28 @@ public class MainFrame extends JFrame {
 					e.printStackTrace();
 				}
 			}
+
+			public void editDriver(int row) {
+				String id = controller.getDriver(row).getId();
+				String firstName = controller.getDriver(row).getFirstName();
+				String lastName = controller.getDriver(row).getLastName();
+				String phoneNumber = controller.getDriver(row).getPhoneNumber();
+				int age = controller.getDriver(row).getAge();
+				String gender = controller.getDriver(row).getGender().name();
+//				 vehicleType = controller.getDriver(row).getVehicleType();
+				String vehicleRegPlate = controller.getDriver(row).getVehicleRegPlate();
+				boolean isAvailable = controller.getDriver(row).isAvailable();
+
+				editDriverDialog.setDefaults(id, firstName, lastName, phoneNumber, age, gender,
+						vehicleRegPlate, isAvailable);
+
+				editDriverDialog.setVisible(true);
+			};
 		});
 
+		// set preferences listener
 		prefsDialog.setPrefsListener(new PrefsListener() {
+			// override preferences listener method
 			public void preferencesSet(String user, String password, int port) {
 				preferences.put("user", user);
 				preferences.put("password", password);
@@ -81,11 +106,23 @@ public class MainFrame extends JFrame {
 			}
 		});
 
+		// set edit driver listener
+		editDriverDialog.setEditDriverListener(new EditDriverListener() {
+			// override edit driver listener method
+			public void formEventOcurred(EditDriverEvent e) {
+				controller.editDriver(e);
+				driverListPanel.refresh();
+			}
+		});
+
+		// get saved preferences
 		String user = preferences.get("user", "");
 		String password = preferences.get("password", "");
 		int port = preferences.getInt("port", 3306);
+		// set preferences dialog defaults
 		prefsDialog.setDefaults(user, password, port);
 
+		// set menu bar
 		setJMenuBar(createMenuBar());
 
 		toolbar.setToolbarListener(new ToolbarListener() {
