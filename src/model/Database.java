@@ -86,7 +86,6 @@ public class Database {
 	}
 	
 	private void update(Driver driver) throws SQLException {
-//											   first_name, last_name, phone_number, age, gender, vehicle_reg_plate, available
 		String updateSql = "update drivers set first_name=?, last_name=?, phone_number=?, age=?, gender=?, vehicle_reg_plate=?, available=?  where id=?";
 		PreparedStatement updateStatement = connection.prepareStatement(updateSql);
 		

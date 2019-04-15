@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -144,7 +145,7 @@ public class MainFrame extends JFrame {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				// TODO: disconnect from database when exiting
+				controller.disconnect();
 				dispose();
 				System.gc();
 			}
@@ -156,6 +157,9 @@ public class MainFrame extends JFrame {
 		add(driverListPanel, BorderLayout.CENTER);
 
 		setSize(600, 500);
+		setMinimumSize(new Dimension(500, 400));
+		// extend to full screen
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setVisible(true);
 	}
